@@ -1,23 +1,20 @@
-# Use the official Python image from the Docker Hub
-FROM python:3.10-slim
+FROM python:3.11-slim
 
-# Set the authors label
 LABEL authors="negar"
 
 # Set the working directory in the container
+ENV PYTHONUNBUFFERED 1
+RUN pip3 install --upgrade pip
+RUN mkdir /app
 WORKDIR /app
 
-# Copy the requirements file into the container
 COPY requirements.txt .
 
-# Install the required dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip3 --timeout=5000 install --no-cache-dir -r ./requirements.txt
 
 # Copy the project files into the container
 COPY . .
 
 # Expose the port the app runs on
 EXPOSE 8000
-
-# Define the command to run the application
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

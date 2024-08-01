@@ -1,15 +1,13 @@
-from rest_framework import viewsets
 from .serializer import DicomSeriesSerializer
 import zipfile
-import io
 import pydicom
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework import status
 from .models import DicomSeries
 from rest_framework import generics
+
 
 class UploadDicomView(APIView):
     parser_classes = (MultiPartParser, FormParser)
@@ -33,7 +31,8 @@ class UploadDicomView(APIView):
 
                                 # Extract and convert data to ensure it's in the correct format
                                 dicom_data = {
-                                    "Patient_id": str(getattr(ds, 'PatientID', '')),  # Default to empty string if attribute is missing
+                                    "Patient_id": str(getattr(ds, 'PatientID', '')),
+                                    # Default to empty string if attribute is missing
                                     "Patient_name": str(getattr(ds, 'PatientName', '')),
                                     "Modality": str(getattr(ds, 'Modality', '')),
                                     "Study_Date": str(getattr(ds, 'StudyDate', ''))
@@ -47,18 +46,22 @@ class UploadDicomView(APIView):
                                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
                             except Exception as e:
-                                return Response({"error": f"Error processing DICOM file {file_name}: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+                                return Response({"error": f"Error processing DICOM file {file_name}: {str(e)}"},
+                                                status=status.HTTP_400_BAD_REQUEST)
 
         except zipfile.BadZipFile:
             return Response({"error": "The file is not a valid ZIP archive."}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            return Response({"error": f"Error processing ZIP archive: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Error processing ZIP archive: {str(e)}"},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response({"status": "DICOM files processed successfully"}, status=status.HTTP_201_CREATED)
+
 
 class DicomSeriesListView(generics.ListCreateAPIView):
     queryset = DicomSeries.objects.all()
     serializer_class = DicomSeriesSerializer
+
 
 class DicomSeriesDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DicomSeries.objects.all()

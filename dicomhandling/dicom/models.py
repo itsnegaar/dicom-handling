@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class DicomSeries(models.Model):
     Patient_id = models.CharField(max_length=100, blank=False, null=False)
     Patient_name = models.CharField(max_length=255, blank=True, null=True)
