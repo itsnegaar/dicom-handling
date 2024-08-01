@@ -1,9 +1,8 @@
+# serializers.py
 from rest_framework import serializers
-from models import DicomSeries
-from views import DicomSeriesViewset
+from .models import DicomSeries
 
 class DicomSeriesSerializer(serializers.ModelSerializer):
-    model = DicomSeries
-
-    class Mate:
+    class Meta:
+        model = DicomSeries
         fields = '__all__'

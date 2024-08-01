@@ -1,0 +1,6 @@
+Django>=4.0,<5.0
+djangorestframework
+pydicom
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
